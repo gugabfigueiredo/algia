@@ -9,7 +9,7 @@ import (
 	"github.com/nbd-wtf/go-nostr/nip19"
 )
 
-func doBMList(cCtx *cli.Context) error {
+func DoBMList(cCtx *cli.Context) error {
 	n := cCtx.Int("n")
 	j := cCtx.Bool("json")
 	extra := cCtx.Bool("extra")
@@ -59,6 +59,6 @@ func doBMList(cCtx *cli.Context) error {
 	return nil
 }
 
-func doBMPost(cCtx *cli.Context) error {
+func DoBMPost(cCtx *cli.Context) error {
 	return errors.New("Not Implemented")
 }

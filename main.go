@@ -426,7 +426,7 @@ func (cfg *Config) Events(filter nostr.Filter) []*nostr.Event {
 	return evs
 }
 
-func doVersion(cCtx *cli.Context) error {
+func DoVersion(cCtx *cli.Context) error {
 	fmt.Println(version)
 	return nil
 }
@@ -452,7 +452,7 @@ func main() {
 					&cli.BoolFlag{Name: "extra", Usage: "extra JSON"},
 					&cli.BoolFlag{Name: "article", Usage: "show articles"},
 				},
-				Action: doTimeline,
+				Action: DoTimeline,
 			},
 			{
 				Name:  "stream",
@@ -464,7 +464,7 @@ func main() {
 					&cli.StringFlag{Name: "pattern"},
 					&cli.StringFlag{Name: "reply"},
 				},
-				Action: doStream,
+				Action: DoStream,
 			},
 			{
 				Name:    "post",
@@ -483,7 +483,7 @@ func main() {
 				UsageText: "algia post [note text]",
 				HelpName:  "post",
 				ArgsUsage: "[note text]",
-				Action:    doPost,
+				Action:    DoPost,
 			},
 			{
 				Name:    "reply",
@@ -500,7 +500,7 @@ func main() {
 				UsageText: "algia reply --id [id] [note text]",
 				HelpName:  "reply",
 				ArgsUsage: "[note text]",
-				Action:    doReply,
+				Action:    DoReply,
 			},
 			{
 				Name:    "repost",
@@ -511,7 +511,7 @@ func main() {
 				Usage:     "repost the note",
 				UsageText: "algia repost --id [id]",
 				HelpName:  "repost",
-				Action:    doRepost,
+				Action:    DoRepost,
 			},
 			{
 				Name:    "unrepost",
@@ -522,7 +522,7 @@ func main() {
 				Usage:     "unrepost the note",
 				UsageText: "algia unrepost --id [id]",
 				HelpName:  "unrepost",
-				Action:    doUnrepost,
+				Action:    DoUnrepost,
 			},
 			{
 				Name:    "like",
@@ -535,7 +535,7 @@ func main() {
 				Usage:     "like the note",
 				UsageText: "algia like --id [id]",
 				HelpName:  "like",
-				Action:    doLike,
+				Action:    DoLike,
 			},
 			{
 				Name:    "unlike",
@@ -546,7 +546,7 @@ func main() {
 				Usage:     "unlike the note",
 				UsageText: "algia unlike --id [id]",
 				HelpName:  "unlike",
-				Action:    doUnlike,
+				Action:    DoUnlike,
 			},
 			{
 				Name:    "delete",
@@ -557,7 +557,7 @@ func main() {
 				Usage:     "delete the note",
 				UsageText: "algia delete --id [id]",
 				HelpName:  "delete",
-				Action:    doDelete,
+				Action:    DoDelete,
 			},
 			{
 				Name:    "search",
@@ -570,7 +570,7 @@ func main() {
 				Usage:     "search notes",
 				UsageText: "algia search [words]",
 				HelpName:  "search",
-				Action:    doSearch,
+				Action:    DoSearch,
 			},
 			{
 				Name: "broadcast",
@@ -581,7 +581,7 @@ func main() {
 				Usage:     "broadcast the note",
 				UsageText: "algia broadcast --id [id]",
 				HelpName:  "broadcast",
-				Action:    doBroadcast,
+				Action:    DoBroadcast,
 			},
 			{
 				Name: "dm-list",
@@ -591,7 +591,7 @@ func main() {
 				Usage:     "show DM list",
 				UsageText: "algia dm-list",
 				HelpName:  "dm-list",
-				Action:    doDMList,
+				Action:    DoDMList,
 			},
 			{
 				Name: "dm-timeline",
@@ -603,7 +603,7 @@ func main() {
 				Usage:     "show DM timeline",
 				UsageText: "algia dm-timeline",
 				HelpName:  "dm-timeline",
-				Action:    doDMTimeline,
+				Action:    DoDMTimeline,
 			},
 			{
 				Name: "dm-post",
@@ -616,7 +616,7 @@ func main() {
 				UsageText: "algia post [note text]",
 				HelpName:  "post",
 				ArgsUsage: "[note text]",
-				Action:    doDMPost,
+				Action:    DoDMPost,
 			},
 			{
 				Name: "bm-list",
@@ -626,7 +626,7 @@ func main() {
 				Usage:     "show bookmarks",
 				UsageText: "algia bm-list",
 				HelpName:  "bm-list",
-				Action:    doBMList,
+				Action:    DoBMList,
 			},
 			{
 				Name:      "bm-post",
@@ -634,7 +634,7 @@ func main() {
 				UsageText: "algia bm-post [note]",
 				HelpName:  "bm-post",
 				ArgsUsage: "[note]",
-				Action:    doBMPost,
+				Action:    DoBMPost,
 			},
 			{
 				Name: "profile",
@@ -645,21 +645,21 @@ func main() {
 				Usage:     "show profile",
 				UsageText: "algia profile",
 				HelpName:  "profile",
-				Action:    doProfile,
+				Action:    DoProfile,
 			},
 			{
 				Name:      "powa",
 				Usage:     "post ぽわ〜",
 				UsageText: "algia powa",
 				HelpName:  "powa",
-				Action:    doPowa,
+				Action:    DoPowa,
 			},
 			{
 				Name:      "puru",
 				Usage:     "post ぷる",
 				UsageText: "algia puru",
 				HelpName:  "puru",
-				Action:    doPuru,
+				Action:    DoPuru,
 			},
 			{
 				Name: "zap",
@@ -670,14 +670,14 @@ func main() {
 				Usage:     "zap something",
 				UsageText: "algia zap [note|npub|nevent]",
 				HelpName:  "zap",
-				Action:    doZap,
+				Action:    DoZap,
 			},
 			{
 				Name:      "version",
 				Usage:     "show version",
 				UsageText: "algia version",
 				HelpName:  "version",
-				Action:    doVersion,
+				Action:    DoVersion,
 			},
 		},
 		Before: func(cCtx *cli.Context) error {

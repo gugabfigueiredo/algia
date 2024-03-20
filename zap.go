@@ -187,7 +187,7 @@ func (cfg *Config) ZapInfo(pub string) (*Lnurlp, error) {
 	return &lp, nil
 }
 
-func doZap(cCtx *cli.Context) error {
+func DoZap(cCtx *cli.Context) error {
 	amount := cCtx.Uint64("amount")
 	comment := cCtx.String("comment")
 	if cCtx.Args().Len() == 0 {

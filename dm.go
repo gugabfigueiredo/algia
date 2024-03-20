@@ -20,7 +20,7 @@ import (
 	"github.com/nbd-wtf/nostr-sdk"
 )
 
-func doDMList(cCtx *cli.Context) error {
+func DoDMList(cCtx *cli.Context) error {
 	j := cCtx.Bool("json")
 
 	cfg := cCtx.App.Metadata["config"].(*Config)
@@ -93,7 +93,7 @@ func doDMList(cCtx *cli.Context) error {
 	return nil
 }
 
-func doDMTimeline(cCtx *cli.Context) error {
+func DoDMTimeline(cCtx *cli.Context) error {
 	u := cCtx.String("u")
 	j := cCtx.Bool("json")
 	extra := cCtx.Bool("extra")
@@ -140,7 +140,7 @@ func doDMTimeline(cCtx *cli.Context) error {
 	return nil
 }
 
-func doDMPost(cCtx *cli.Context) error {
+func DoDMPost(cCtx *cli.Context) error {
 	u := cCtx.String("u")
 	stdin := cCtx.Bool("stdin")
 	if !stdin && cCtx.Args().Len() == 0 {
