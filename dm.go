@@ -23,7 +23,7 @@ import (
 func DoDMList(cCtx *cli.Context) error {
 	j := cCtx.Bool("json")
 
-	cfg := cCtx.App.Metadata["config"].(*Config)
+	cfg := cCtx.App.Metadata["config"].(*domain.Config)
 
 	// get followers
 	followsMap, err := cfg.GetFollows(cCtx.String("a"))
@@ -98,7 +98,7 @@ func DoDMTimeline(cCtx *cli.Context) error {
 	j := cCtx.Bool("json")
 	extra := cCtx.Bool("extra")
 
-	cfg := cCtx.App.Metadata["config"].(*Config)
+	cfg := cCtx.App.Metadata["config"].(*domain.Config)
 
 	var sk string
 	var npub string
@@ -148,7 +148,7 @@ func DoDMPost(cCtx *cli.Context) error {
 	}
 	sensitive := cCtx.String("sensitive")
 
-	cfg := cCtx.App.Metadata["config"].(*Config)
+	cfg := cCtx.App.Metadata["config"].(*domain.Config)
 
 	var sk string
 	if _, s, err := nip19.Decode(cfg.PrivateKey); err == nil {

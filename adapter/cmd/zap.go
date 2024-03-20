@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"context"
@@ -6,58 +6,17 @@ import (
 	"errors"
 	"fmt"
 	"github.com/mattn/algia/domain"
-	"net/http"
-	"net/url"
-	"os"
-	"strings"
-
 	"github.com/mdp/qrterminal/v3"
-	"github.com/urfave/cli/v2"
-
 	"github.com/nbd-wtf/go-nostr"
 	"github.com/nbd-wtf/go-nostr/nip04"
 	"github.com/nbd-wtf/go-nostr/nip19"
+	"github.com/urfave/cli/v2"
+	"net/http"
+	"net/url"
+	"os"
 )
 
-// Lnurlp is
-type Lnurlp struct {
-	Callback       string `json:"callback"`
-	MaxSendable    int64  `json:"maxSendable"`
-	MinSendable    int    `json:"minSendable"`
-	Metadata       string `json:"metadata"`
-	CommentAllowed int    `json:"commentAllowed"`
-	Tag            string `json:"tag"`
-	AllowsNostr    bool   `json:"allowsNostr"`
-	NostrPubkey    string `json:"nostrPubkey"`
-}
-
-// Invoice is
-type Invoice struct {
-	PR string `json:"pr"`
-}
-
-// PayRequest is
-type PayRequest struct {
-	Method string `json:"method"`
-	Params struct {
-		Invoice string   `json:"invoice"`
-		Routes  []string `json:"routes:"`
-	} `json:"params"`
-}
-
-// PayResponse is
-type PayResponse struct {
-	ResultType *string `json:"result_type"`
-	Err        *struct {
-		Code    string `json:"code"`
-		Message string `json:"message"`
-	} `json:"error"`
-	Result *struct {
-		Preimage string `json:"preimage"`
-	} `json:"result"`
-}
-
-func pay(cfg *Config, invoice string) error {
+func pay(cfg *domain.Config, invoice string) error {
 	uri, err := url.Parse(cfg.NwcURI)
 	if err != nil {
 		return err
@@ -80,7 +39,7 @@ func pay(cfg *Config, invoice string) error {
 	if err != nil {
 		return err
 	}
-	var req PayRequest
+	var req domain.PayRequest
 	req.Method = "pay_invoice"
 	req.Params.Invoice = invoice
 	b, err := json.Marshal(req)
@@ -127,7 +86,7 @@ func pay(cfg *Config, invoice string) error {
 	if err != nil {
 		return err
 	}
-	var resp PayResponse
+	var resp domain.PayResponse
 	err = json.Unmarshal([]byte(content), &resp)
 	if err != nil {
 		return err
@@ -137,54 +96,6 @@ func pay(cfg *Config, invoice string) error {
 	}
 	json.NewEncoder(os.Stdout).Encode(resp)
 	return nil
-}
-
-// ZapInfo is
-func (cfg *Config) ZapInfo(pub string) (*Lnurlp, error) {
-	relay := cfg.FindRelay(context.Background(), domain.Relay{Read: true})
-	if relay == nil {
-		return nil, errors.New("cannot connect relays")
-	}
-	defer relay.Close()
-
-	// get set-metadata
-	filter := nostr.Filter{
-		Kinds:   []int{nostr.KindProfileMetadata},
-		Authors: []string{pub},
-		Limit:   1,
-	}
-
-	evs := cfg.Events(filter)
-	if len(evs) == 0 {
-		return nil, errors.New("cannot find user")
-	}
-
-	var profile domain.Profile
-	err := json.Unmarshal([]byte(evs[0].Content), &profile)
-	if err != nil {
-		return nil, err
-	}
-
-	tok := strings.SplitN(profile.Lud16, "@", 2)
-	if err != nil {
-		return nil, err
-	}
-	if len(tok) != 2 {
-		return nil, errors.New("receipt address is not valid")
-	}
-
-	resp, err := http.Get("https://" + tok[1] + "/.well-known/lnurlp/" + tok[0])
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	var lp Lnurlp
-	err = json.NewDecoder(resp.Body).Decode(&lp)
-	if err != nil {
-		return nil, err
-	}
-	return &lp, nil
 }
 
 func DoZap(cCtx *cli.Context) error {
@@ -198,7 +109,7 @@ func DoZap(cCtx *cli.Context) error {
 		return cli.ShowSubcommandHelp(cCtx)
 	}
 
-	cfg := cCtx.App.Metadata["config"].(*Config)
+	cfg := cCtx.App.Metadata["config"].(*domain.Config)
 
 	var sk string
 	if _, s, err := nip19.Decode(cfg.PrivateKey); err == nil {
@@ -278,7 +189,7 @@ func DoZap(cCtx *cli.Context) error {
 	}
 	defer resp.Body.Close()
 
-	var iv Invoice
+	var iv domain.Invoice
 	err = json.NewDecoder(resp.Body).Decode(&iv)
 	if err != nil {
 		return err
@@ -297,7 +208,7 @@ func DoZap(cCtx *cli.Context) error {
 		fmt.Println("lightning:" + iv.PR)
 		qrterminal.GenerateWithConfig("lightning:"+iv.PR, config)
 	} else {
-		pay(cCtx.App.Metadata["config"].(*Config), iv.PR)
+		pay(cCtx.App.Metadata["config"].(*domain.Config), iv.PR)
 	}
 	return nil
 }

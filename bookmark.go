@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"github.com/mattn/algia/domain"
 
 	"github.com/urfave/cli/v2"
 
@@ -14,7 +15,7 @@ func DoBMList(cCtx *cli.Context) error {
 	j := cCtx.Bool("json")
 	extra := cCtx.Bool("extra")
 
-	cfg := cCtx.App.Metadata["config"].(*Config)
+	cfg := cCtx.App.Metadata["config"].(*domain.Config)
 
 	// get followers
 	followsMap, err := cfg.GetFollows(cCtx.String("a"))

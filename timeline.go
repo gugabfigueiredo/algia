@@ -34,7 +34,7 @@ func DoPost(cCtx *cli.Context) error {
 		return cli.ShowSubcommandHelp(cCtx)
 	}
 
-	cfg := cCtx.App.Metadata["config"].(*Config)
+	cfg := cCtx.App.Metadata["config"].(*domain.Config)
 
 	var sk string
 	if _, s, err := nip19.Decode(cfg.PrivateKey); err == nil {
@@ -139,7 +139,7 @@ func DoPost(cCtx *cli.Context) error {
 	if success.Load() == 0 {
 		return errors.New("cannot post")
 	}
-	if cfg.verbose {
+	if cfg.Verbose {
 		if id, err := nip19.EncodeNote(ev.ID); err == nil {
 			fmt.Println(id)
 		}
@@ -157,7 +157,7 @@ func DoReply(cCtx *cli.Context) error {
 	sensitive := cCtx.String("sensitive")
 	geohash := cCtx.String("geohash")
 
-	cfg := cCtx.App.Metadata["config"].(*Config)
+	cfg := cCtx.App.Metadata["config"].(*domain.Config)
 
 	var sk string
 	if _, s, err := nip19.Decode(cfg.PrivateKey); err == nil {
@@ -259,7 +259,7 @@ func DoReply(cCtx *cli.Context) error {
 func DoRepost(cCtx *cli.Context) error {
 	id := cCtx.String("id")
 
-	cfg := cCtx.App.Metadata["config"].(*Config)
+	cfg := cCtx.App.Metadata["config"].(*domain.Config)
 
 	ev := nostr.Event{}
 	var sk string
@@ -332,7 +332,7 @@ func DoUnrepost(cCtx *cli.Context) error {
 		return fmt.Errorf("failed to parse event from '%s'", id)
 	}
 
-	cfg := cCtx.App.Metadata["config"].(*Config)
+	cfg := cCtx.App.Metadata["config"].(*domain.Config)
 
 	var sk string
 	if _, s, err := nip19.Decode(cfg.PrivateKey); err == nil {
@@ -391,7 +391,7 @@ func DoUnrepost(cCtx *cli.Context) error {
 func DoLike(cCtx *cli.Context) error {
 	id := cCtx.String("id")
 
-	cfg := cCtx.App.Metadata["config"].(*Config)
+	cfg := cCtx.App.Metadata["config"].(*domain.Config)
 
 	ev := nostr.Event{}
 	var sk string
@@ -476,7 +476,7 @@ func DoUnlike(cCtx *cli.Context) error {
 		return fmt.Errorf("failed to parse event from '%s'", id)
 	}
 
-	cfg := cCtx.App.Metadata["config"].(*Config)
+	cfg := cCtx.App.Metadata["config"].(*domain.Config)
 
 	var sk string
 	if _, s, err := nip19.Decode(cfg.PrivateKey); err == nil {
@@ -535,7 +535,7 @@ func DoUnlike(cCtx *cli.Context) error {
 func DoDelete(cCtx *cli.Context) error {
 	id := cCtx.String("id")
 
-	cfg := cCtx.App.Metadata["config"].(*Config)
+	cfg := cCtx.App.Metadata["config"].(*domain.Config)
 
 	ev := nostr.Event{}
 	var sk string
@@ -586,7 +586,7 @@ func DoSearch(cCtx *cli.Context) error {
 	j := cCtx.Bool("json")
 	extra := cCtx.Bool("extra")
 
-	cfg := cCtx.App.Metadata["config"].(*Config)
+	cfg := cCtx.App.Metadata["config"].(*domain.Config)
 
 	// get followers
 	var followsMap map[string]domain.Profile
@@ -633,7 +633,7 @@ func DoBroadcast(cCtx *cli.Context) error {
 		}
 	}
 
-	cfg := cCtx.App.Metadata["config"].(*Config)
+	cfg := cCtx.App.Metadata["config"].(*domain.Config)
 
 	var ev *nostr.Event
 	var mu sync.Mutex
@@ -706,7 +706,7 @@ func DoStream(cCtx *cli.Context) error {
 		}
 	}
 
-	cfg := cCtx.App.Metadata["config"].(*Config)
+	cfg := cCtx.App.Metadata["config"].(*domain.Config)
 
 	relay := cfg.FindRelay(context.Background(), domain.Relay{Read: true})
 	if relay == nil {
@@ -792,7 +792,7 @@ func DoTimeline(cCtx *cli.Context) error {
 	extra := cCtx.Bool("extra")
 	article := cCtx.Bool("article")
 
-	cfg := cCtx.App.Metadata["config"].(*Config)
+	cfg := cCtx.App.Metadata["config"].(*domain.Config)
 
 	// get followers
 	followsMap, err := cfg.GetFollows(cCtx.String("a"))
@@ -830,7 +830,7 @@ func DoTimeline(cCtx *cli.Context) error {
 }
 
 func postMsg(cCtx *cli.Context, msg string) error {
-	cfg := cCtx.App.Metadata["config"].(*Config)
+	cfg := cCtx.App.Metadata["config"].(*domain.Config)
 
 	var sk string
 	if _, s, err := nip19.Decode(cfg.PrivateKey); err == nil {

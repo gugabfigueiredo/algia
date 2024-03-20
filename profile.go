@@ -19,7 +19,7 @@ func DoProfile(cCtx *cli.Context) error {
 	user := cCtx.String("u")
 	j := cCtx.Bool("json")
 
-	cfg := cCtx.App.Metadata["config"].(*Config)
+	cfg := cCtx.App.Metadata["config"].(*domain.Config)
 	relay := cfg.FindRelay(context.Background(), domain.Relay{Read: true})
 	if relay == nil {
 		return errors.New("cannot connect relays")
