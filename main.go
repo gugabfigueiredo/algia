@@ -32,7 +32,7 @@ func main() {
 					&cli.BoolFlag{Name: "extra", Usage: "extra JSON"},
 					&cli.BoolFlag{Name: "article", Usage: "show articles"},
 				},
-				Action: DoTimeline,
+				Action: cmd.DoTimeline,
 			},
 			{
 				Name:  "stream",
@@ -44,7 +44,7 @@ func main() {
 					&cli.StringFlag{Name: "pattern"},
 					&cli.StringFlag{Name: "reply"},
 				},
-				Action: DoStream,
+				Action: cmd.DoStream,
 			},
 			{
 				Name:    "post",
@@ -63,7 +63,7 @@ func main() {
 				UsageText: "algia post [note text]",
 				HelpName:  "post",
 				ArgsUsage: "[note text]",
-				Action:    DoPost,
+				Action:    cmd.DoPost,
 			},
 			{
 				Name:    "reply",
@@ -80,7 +80,7 @@ func main() {
 				UsageText: "algia reply --id [id] [note text]",
 				HelpName:  "reply",
 				ArgsUsage: "[note text]",
-				Action:    DoReply,
+				Action:    cmd.DoReply,
 			},
 			{
 				Name:    "repost",
@@ -91,7 +91,7 @@ func main() {
 				Usage:     "repost the note",
 				UsageText: "algia repost --id [id]",
 				HelpName:  "repost",
-				Action:    DoRepost,
+				Action:    cmd.DoRepost,
 			},
 			{
 				Name:    "unrepost",
@@ -102,7 +102,7 @@ func main() {
 				Usage:     "unrepost the note",
 				UsageText: "algia unrepost --id [id]",
 				HelpName:  "unrepost",
-				Action:    DoUnrepost,
+				Action:    cmd.DoUnrepost,
 			},
 			{
 				Name:    "like",
@@ -115,7 +115,7 @@ func main() {
 				Usage:     "like the note",
 				UsageText: "algia like --id [id]",
 				HelpName:  "like",
-				Action:    DoLike,
+				Action:    cmd.DoLike,
 			},
 			{
 				Name:    "unlike",
@@ -126,7 +126,7 @@ func main() {
 				Usage:     "unlike the note",
 				UsageText: "algia unlike --id [id]",
 				HelpName:  "unlike",
-				Action:    DoUnlike,
+				Action:    cmd.DoUnlike,
 			},
 			{
 				Name:    "delete",
@@ -137,7 +137,7 @@ func main() {
 				Usage:     "delete the note",
 				UsageText: "algia delete --id [id]",
 				HelpName:  "delete",
-				Action:    DoDelete,
+				Action:    cmd.DoDelete,
 			},
 			{
 				Name:    "search",
@@ -150,7 +150,7 @@ func main() {
 				Usage:     "search notes",
 				UsageText: "algia search [words]",
 				HelpName:  "search",
-				Action:    DoSearch,
+				Action:    cmd.DoSearch,
 			},
 			{
 				Name: "broadcast",
@@ -161,7 +161,7 @@ func main() {
 				Usage:     "broadcast the note",
 				UsageText: "algia broadcast --id [id]",
 				HelpName:  "broadcast",
-				Action:    DoBroadcast,
+				Action:    cmd.DoBroadcast,
 			},
 			{
 				Name: "dm-list",
@@ -171,7 +171,7 @@ func main() {
 				Usage:     "show DM list",
 				UsageText: "algia dm-list",
 				HelpName:  "dm-list",
-				Action:    DoDMList,
+				Action:    cmd.DoDMList,
 			},
 			{
 				Name: "dm-timeline",
@@ -183,7 +183,7 @@ func main() {
 				Usage:     "show DM timeline",
 				UsageText: "algia dm-timeline",
 				HelpName:  "dm-timeline",
-				Action:    DoDMTimeline,
+				Action:    cmd.DoDMTimeline,
 			},
 			{
 				Name: "dm-post",
@@ -196,7 +196,7 @@ func main() {
 				UsageText: "algia post [note text]",
 				HelpName:  "post",
 				ArgsUsage: "[note text]",
-				Action:    DoDMPost,
+				Action:    cmd.DoDMPost,
 			},
 			{
 				Name: "bm-list",
@@ -206,7 +206,7 @@ func main() {
 				Usage:     "show bookmarks",
 				UsageText: "algia bm-list",
 				HelpName:  "bm-list",
-				Action:    DoBMList,
+				Action:    cmd.DoBMList,
 			},
 			{
 				Name:      "bm-post",
@@ -214,7 +214,7 @@ func main() {
 				UsageText: "algia bm-post [note]",
 				HelpName:  "bm-post",
 				ArgsUsage: "[note]",
-				Action:    DoBMPost,
+				Action:    cmd.DoBMPost,
 			},
 			{
 				Name: "profile",
@@ -225,21 +225,21 @@ func main() {
 				Usage:     "show profile",
 				UsageText: "algia profile",
 				HelpName:  "profile",
-				Action:    DoProfile,
+				Action:    cmd.DoProfile,
 			},
 			{
 				Name:      "powa",
 				Usage:     "post ぽわ〜",
 				UsageText: "algia powa",
 				HelpName:  "powa",
-				Action:    DoPowa,
+				Action:    cmd.DoPowa,
 			},
 			{
 				Name:      "puru",
 				Usage:     "post ぷる",
 				UsageText: "algia puru",
 				HelpName:  "puru",
-				Action:    DoPuru,
+				Action:    cmd.DoPuru,
 			},
 			{
 				Name: "zap",
@@ -289,7 +289,7 @@ func main() {
 	}
 
 	if err := app.Run(os.Args); err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		_, _ = fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }
