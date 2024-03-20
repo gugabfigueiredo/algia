@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/mattn/algia/domain"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -27,42 +28,18 @@ const version = "0.0.67"
 
 var revision = "HEAD"
 
-// Relay is
-type Relay struct {
-	Read   bool `json:"read"`
-	Write  bool `json:"write"`
-	Search bool `json:"search"`
-}
-
 // Config is
 type Config struct {
-	Relays     map[string]Relay   `json:"relays"`
-	Follows    map[string]Profile `json:"follows"`
-	PrivateKey string             `json:"privatekey"`
-	Updated    time.Time          `json:"updated"`
-	Emojis     map[string]string  `json:"emojis"`
-	NwcURI     string             `json:"nwc-uri"`
-	NwcPub     string             `json:"nwc-pub"`
+	Relays     map[string]domain.Relay   `json:"relays"`
+	Follows    map[string]domain.Profile `json:"follows"`
+	PrivateKey string                    `json:"privatekey"`
+	Updated    time.Time                 `json:"updated"`
+	Emojis     map[string]string         `json:"emojis"`
+	NwcURI     string                    `json:"nwc-uri"`
+	NwcPub     string                    `json:"nwc-pub"`
 	verbose    bool
 	tempRelay  bool
 	sk         string
-}
-
-// Event is
-type Event struct {
-	Event   *nostr.Event `json:"event"`
-	Profile Profile      `json:"profile"`
-}
-
-// Profile is
-type Profile struct {
-	Website     string `json:"website"`
-	Nip05       string `json:"nip05"`
-	Picture     string `json:"picture"`
-	Lud16       string `json:"lud16"`
-	DisplayName string `json:"display_name"`
-	About       string `json:"about"`
-	Name        string `json:"name"`
 }
 
 func configDir() (string, error) {
@@ -114,8 +91,8 @@ func loadConfig(profile string) (*Config, error) {
 		return nil, err
 	}
 	if len(cfg.Relays) == 0 {
-		cfg.Relays = map[string]Relay{}
-		cfg.Relays["wss://relay.nostr.band"] = Relay{
+		cfg.Relays = map[string]domain.Relay{}
+		cfg.Relays["wss://relay.nostr.band"] = domain.Relay{
 			Read:   true,
 			Write:  true,
 			Search: true,
@@ -125,7 +102,7 @@ func loadConfig(profile string) (*Config, error) {
 }
 
 // GetFollows is
-func (cfg *Config) GetFollows(profile string) (map[string]Profile, error) {
+func (cfg *Config) GetFollows(profile string) (map[string]domain.Profile, error) {
 	var mu sync.Mutex
 	var pub string
 	if _, s, err := nip19.Decode(cfg.PrivateKey); err == nil {
@@ -139,17 +116,17 @@ func (cfg *Config) GetFollows(profile string) (map[string]Profile, error) {
 	// get followers
 	if (cfg.Updated.Add(3*time.Hour).Before(time.Now()) && !cfg.tempRelay) || len(cfg.Follows) == 0 {
 		mu.Lock()
-		cfg.Follows = map[string]Profile{}
+		cfg.Follows = map[string]domain.Profile{}
 		mu.Unlock()
 		m := map[string]struct{}{}
 
-		cfg.Do(Relay{Read: true}, func(ctx context.Context, relay *nostr.Relay) bool {
+		cfg.Do(domain.Relay{Read: true}, func(ctx context.Context, relay *nostr.Relay) bool {
 			evs, err := relay.QuerySync(ctx, nostr.Filter{Kinds: []int{nostr.KindContactList}, Authors: []string{pub}, Limit: 1})
 			if err != nil {
 				return true
 			}
 			for _, ev := range evs {
-				var rm map[string]Relay
+				var rm map[string]domain.Relay
 				if cfg.tempRelay == false {
 					if err := json.Unmarshal([]byte(ev.Content), &rm); err == nil {
 						for k, v1 := range cfg.Relays {
@@ -187,7 +164,7 @@ func (cfg *Config) GetFollows(profile string) (map[string]Profile, error) {
 				}
 
 				// get follower's descriptions
-				cfg.Do(Relay{Read: true}, func(ctx context.Context, relay *nostr.Relay) bool {
+				cfg.Do(domain.Relay{Read: true}, func(ctx context.Context, relay *nostr.Relay) bool {
 					evs, err := relay.QuerySync(ctx, nostr.Filter{
 						Kinds:   []int{nostr.KindProfileMetadata},
 						Authors: follows[i:end], // Use the updated end index
@@ -196,7 +173,7 @@ func (cfg *Config) GetFollows(profile string) (map[string]Profile, error) {
 						return true
 					}
 					for _, ev := range evs {
-						var profile Profile
+						var profile domain.Profile
 						err := json.Unmarshal([]byte(ev.Content), &profile)
 						if err == nil {
 							mu.Lock()
@@ -218,7 +195,7 @@ func (cfg *Config) GetFollows(profile string) (map[string]Profile, error) {
 }
 
 // FindRelay is
-func (cfg *Config) FindRelay(ctx context.Context, r Relay) *nostr.Relay {
+func (cfg *Config) FindRelay(ctx context.Context, r domain.Relay) *nostr.Relay {
 	for k, v := range cfg.Relays {
 		if r.Write && !v.Write {
 			continue
@@ -245,7 +222,7 @@ func (cfg *Config) FindRelay(ctx context.Context, r Relay) *nostr.Relay {
 }
 
 // Do is
-func (cfg *Config) Do(r Relay, f func(context.Context, *nostr.Relay) bool) {
+func (cfg *Config) Do(r domain.Relay, f func(context.Context, *nostr.Relay) bool) {
 	var wg sync.WaitGroup
 	ctx := context.Background()
 	for k, v := range cfg.Relays {
@@ -259,7 +236,7 @@ func (cfg *Config) Do(r Relay, f func(context.Context, *nostr.Relay) bool) {
 			continue
 		}
 		wg.Add(1)
-		go func(wg *sync.WaitGroup, k string, v Relay) {
+		go func(wg *sync.WaitGroup, k string, v domain.Relay) {
 			defer wg.Done()
 			relay, err := nostr.RelayConnect(ctx, k)
 			if err != nil {
@@ -337,13 +314,13 @@ func (cfg *Config) Decode(ev *nostr.Event) error {
 }
 
 // PrintEvents is
-func (cfg *Config) PrintEvents(evs []*nostr.Event, followsMap map[string]Profile, j, extra bool) {
+func (cfg *Config) PrintEvents(evs []*nostr.Event, followsMap map[string]domain.Profile, j, extra bool) {
 	if j {
 		if extra {
-			var events []Event
+			var events []domain.Event
 			for _, ev := range evs {
 				if profile, ok := followsMap[ev.PubKey]; ok {
-					events = append(events, Event{
+					events = append(events, domain.Event{
 						Event:   ev,
 						Profile: profile,
 					})
@@ -391,7 +368,7 @@ func (cfg *Config) Events(filter nostr.Filter) []*nostr.Event {
 	var mu sync.Mutex
 	found := false
 	var m sync.Map
-	cfg.Do(Relay{Read: true}, func(ctx context.Context, relay *nostr.Relay) bool {
+	cfg.Do(domain.Relay{Read: true}, func(ctx context.Context, relay *nostr.Relay) bool {
 		mu.Lock()
 		if found {
 			mu.Unlock()
@@ -718,9 +695,9 @@ func main() {
 			cfg.verbose = cCtx.Bool("V")
 			relays := cCtx.String("relays")
 			if strings.TrimSpace(relays) != "" {
-				cfg.Relays = make(map[string]Relay)
+				cfg.Relays = make(map[string]domain.Relay)
 				for _, relay := range strings.Split(relays, ",") {
-					cfg.Relays[relay] = Relay{
+					cfg.Relays[relay] = domain.Relay{
 						Read:  true,
 						Write: true,
 					}

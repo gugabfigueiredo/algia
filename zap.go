@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/mattn/algia/domain"
 	"net/http"
 	"net/url"
 	"os"
@@ -140,7 +141,7 @@ func pay(cfg *Config, invoice string) error {
 
 // ZapInfo is
 func (cfg *Config) ZapInfo(pub string) (*Lnurlp, error) {
-	relay := cfg.FindRelay(context.Background(), Relay{Read: true})
+	relay := cfg.FindRelay(context.Background(), domain.Relay{Read: true})
 	if relay == nil {
 		return nil, errors.New("cannot connect relays")
 	}
@@ -158,7 +159,7 @@ func (cfg *Config) ZapInfo(pub string) (*Lnurlp, error) {
 		return nil, errors.New("cannot find user")
 	}
 
-	var profile Profile
+	var profile domain.Profile
 	err := json.Unmarshal([]byte(evs[0].Content), &profile)
 	if err != nil {
 		return nil, err

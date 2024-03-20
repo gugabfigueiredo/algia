@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/mattn/algia/domain"
 	"os"
 
 	"github.com/urfave/cli/v2"
@@ -19,7 +20,7 @@ func doProfile(cCtx *cli.Context) error {
 	j := cCtx.Bool("json")
 
 	cfg := cCtx.App.Metadata["config"].(*Config)
-	relay := cfg.FindRelay(context.Background(), Relay{Read: true})
+	relay := cfg.FindRelay(context.Background(), domain.Relay{Read: true})
 	if relay == nil {
 		return errors.New("cannot connect relays")
 	}
@@ -58,7 +59,7 @@ func doProfile(cCtx *cli.Context) error {
 		fmt.Fprintln(os.Stdout, evs[0].Content)
 		return nil
 	}
-	var profile Profile
+	var profile domain.Profile
 	err := json.Unmarshal([]byte(evs[0].Content), &profile)
 	if err != nil {
 		return err
