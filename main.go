@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/mattn/algia/adapter/cmd"
-	"github.com/mattn/algia/domain"
+	"github.com/mattn/algia/internal/adapter/cmd"
+	"github.com/mattn/algia/internal/domain"
 	"github.com/urfave/cli/v2"
 	"os"
 	"strings"
