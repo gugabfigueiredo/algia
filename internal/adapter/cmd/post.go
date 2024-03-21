@@ -9,7 +9,7 @@ import (
 	"github.com/nbd-wtf/go-nostr/nip19"
 	"github.com/nbd-wtf/nostr-sdk"
 	"github.com/urfave/cli/v2"
-	"io/ioutil"
+	"io"
 	"os"
 	"strings"
 	"sync/atomic"
@@ -48,7 +48,7 @@ func DoPost(cCtx *cli.Context) error {
 	}
 
 	if stdin {
-		b, err := ioutil.ReadAll(os.Stdin)
+		b, err := io.ReadAll(os.Stdin)
 		if err != nil {
 			return err
 		}
