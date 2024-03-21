@@ -3,7 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"github.com/mattn/algia/domain"
+	"github.com/mattn/algia/internal/domain"
 	"github.com/nbd-wtf/go-nostr"
 	"github.com/nbd-wtf/nostr-sdk"
 	"github.com/urfave/cli/v2"

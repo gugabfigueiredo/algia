@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/mattn/algia/domain"
+	"github.com/mattn/algia/internal/domain"
 	"os"
 
 	"github.com/urfave/cli/v2"

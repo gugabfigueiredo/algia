@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/mattn/algia/application"
+	"github.com/mattn/algia/internal/application"
 	"github.com/urfave/cli/v2"
 )
 

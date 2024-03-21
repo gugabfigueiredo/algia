@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"errors"
-	"github.com/mattn/algia/domain"
+	"github.com/mattn/algia/internal/domain"
 
 	"github.com/urfave/cli/v2"
 

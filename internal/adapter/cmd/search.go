@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/mattn/algia/domain"
+	"github.com/mattn/algia/internal/domain"
 	"github.com/nbd-wtf/go-nostr"
 	"github.com/urfave/cli/v2"
 	"strings"
